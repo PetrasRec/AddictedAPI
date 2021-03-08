@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Addicted.Service;
+using Microsoft.AspNetCore.Authorization;
+using Addicted.Models;
 
 namespace Addicted.Controllers
 {
@@ -12,17 +14,29 @@ namespace Addicted.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private IUserService userService;
+        private IUsersService usersService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUsersService usersService)
         {
-            this.userService = userService;
+            this.usersService = usersService;
         }
 
         [HttpGet]
-        public ActionResult<string> getAllUsers()
+        public ActionResult<dynamic> getAllUsers()
         {
-            return Ok("Hello World!");
+            var users = usersService.GetAllUsers();
+            return Ok(users);
         }
+
+
+        [HttpPost]
+        public async Task<dynamic> RegisterNewUser([FromBody] UserModel user)
+        {
+            var addedUser = await usersService.RegisterNewUser(user);
+            return Ok(addedUser);
+        }
+
+
+
     }
 }
