@@ -67,6 +67,11 @@ namespace Addicted
             {
                 x.Password.RequireDigit = false;
             });
+
+            services.AddCors(o => o.AddPolicy("DevCorsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +79,7 @@ namespace Addicted
         {
             if (env.IsDevelopment())
             {
+                app.UseCors("DevCorsPolicy");
                 app.UseDeveloperExceptionPage();
             }
 
