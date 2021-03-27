@@ -9,16 +9,26 @@ namespace Addicted.Models
 {
     public class AuthenticationContext : IdentityDbContext
     {
-        public AuthenticationContext(DbContextOptions options) : base(options)
+        public AuthenticationContext(DbContextOptions<AuthenticationContext> options) : base(options)
         {
              
         }
 
-        public DbSet<User> users { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Bet>().HasMany(b => b.BetOptions).WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<Bet> Bets { get; set; }
 
         public User GetUserByEmail(string email)
         {
-            return users.Single(u => u.NormalizedEmail == email.ToUpper());
+            return Users.Single(u => u.NormalizedEmail == email.ToUpper());
         }
     }
 }

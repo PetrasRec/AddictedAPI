@@ -35,8 +35,5 @@ namespace Addicted.Controllers
             var addedUser = await usersService.RegisterNewUser(user);
             return Ok(addedUser);
         }
-
-
-
     }
 }
