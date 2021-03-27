@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 namespace Addicted
 {
     public class Startup
@@ -58,7 +59,6 @@ namespace Addicted
 
             services.AddDbContext<AuthenticationContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
-
 
             services.AddDefaultIdentity<User>()
                 .AddEntityFrameworkStores<AuthenticationContext>();

@@ -60,7 +60,7 @@ namespace Addicted.Service
 
         public IEnumerable<User> GetAllUsers()
         {
-            return authenticationContext.users;
+            return authenticationContext.Users;
         }
     }
 }
