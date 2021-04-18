@@ -52,7 +52,7 @@ namespace Addicted.Service
                 }
                 var newUser = authenticationContext.Users.Single(u => addedUser.Email.ToUpper() == u.NormalizedEmail);
 
-                await _userManager.AddToRoleAsync(newUser, Roles.Admin);
+                await _userManager.AddToRoleAsync(newUser, Roles.User);
                 return result;
             }
             catch (Exception ex)
