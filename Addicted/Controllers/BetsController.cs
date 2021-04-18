@@ -67,6 +67,7 @@ namespace Addicted.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
+            
             var user = await _userManager.FindByIdAsync(User.Identity.Name);
             var bet = await _context.Bets.FindAsync(modifiedBet.Id);
 

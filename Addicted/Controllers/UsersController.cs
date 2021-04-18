@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Addicted.Service;
 using Microsoft.AspNetCore.Authorization;
 using Addicted.Models;
+using Addicted.Config;
 
 namespace Addicted.Controllers
 {
+   [Authorize(Roles="Admin")]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
