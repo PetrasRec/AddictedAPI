@@ -3,7 +3,9 @@ using Addicted.Models;
 using Addicted.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +53,15 @@ namespace Addicted
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
+                    ValidateLifetime = true,
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["access_token"];
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
@@ -60,18 +71,26 @@ namespace Addicted
             services.AddDbContext<AuthenticationContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
 
-            services.AddDefaultIdentity<User>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<AuthenticationContext>();
 
             services.Configure<IdentityOptions>(x =>
             {
-                x.Password.RequireDigit = false;
+
             });
 
             services.AddCors(o => o.AddPolicy("DevCorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
             }));
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.HttpOnly = HttpOnlyPolicy.Always;
+                options.Secure = CookieSecurePolicy.Always;
+            });
+ 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

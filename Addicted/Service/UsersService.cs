@@ -1,4 +1,5 @@
-﻿using Addicted.Models;
+﻿using Addicted.Config;
+using Addicted.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Addicted.Service
         }
 
         public async Task<bool> LogInUser(string email, string password)
-        {
+        {  
             var result = await _signInManager.PasswordSignInAsync(email, password, true, false);
             return result.Succeeded;
         }
@@ -45,6 +46,13 @@ namespace Addicted.Service
             try
             {
                 var result = await _userManager.CreateAsync(addedUser, user.Password);
+                if (!result.Succeeded)
+                {
+                    return result;
+                }
+                var newUser = authenticationContext.Users.Single(u => addedUser.Email.ToUpper() == u.NormalizedEmail);
+
+                await _userManager.AddToRoleAsync(newUser, Roles.Admin);
                 return result;
             }
             catch (Exception ex)

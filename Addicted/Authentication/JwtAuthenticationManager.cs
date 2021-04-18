@@ -20,12 +20,13 @@ namespace Addicted.Authentication
             this.usersService = usersService;
         }
         public async Task<JwtToken> Authenticate(string email, string password)
-        {
+        { 
             bool correctLogInDetails = await usersService.LogInUser(email, password);
             if (!correctLogInDetails)
             {
                 return null;
             }
+
             var user = usersService.GetUserByEmail(email);
 
             var tokenHandler = new JwtSecurityTokenHandler();

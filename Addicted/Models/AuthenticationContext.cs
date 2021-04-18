@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Addicted.Models
     {
         public AuthenticationContext(DbContextOptions<AuthenticationContext> options) : base(options)
         {
-             
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +27,7 @@ namespace Addicted.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Bet> Bets { get; set; }
 
+   
         public User GetUserByEmail(string email)
         {
             return Users.Single(u => u.NormalizedEmail == email.ToUpper());

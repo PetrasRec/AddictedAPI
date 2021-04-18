@@ -1,5 +1,6 @@
 ﻿using Addicted.Authentication;
 using Addicted.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,11 @@ namespace Addicted.Controllers
             {
                 return Unauthorized();
             }
-            return Ok(token);
+            Response.Cookies.Append("access_token", token.Token, new CookieOptions()
+            {
+                HttpOnly=true,
+            });
+            return Ok();
         }
     }
 }
