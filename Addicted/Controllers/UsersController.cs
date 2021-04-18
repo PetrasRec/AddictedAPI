@@ -23,17 +23,49 @@ namespace Addicted.Controllers
         }
 
         [HttpGet]
-        public ActionResult<dynamic> getAllUsers()
+        public ActionResult<dynamic> GetAllUsers()
         {
             var users = usersService.GetAllUsers();
             return Ok(users);
         }
 
+        [HttpPut("{id}")]
+        public ActionResult<dynamic> UpdateUserByID(string ?id, [FromBody] UserModel newData)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
+            var updatedUser = usersService.UpdateUserByID(id, newData);
+            if (updatedUser == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedUser);
+        }
 
         [HttpPost]
+        public async Task<dynamic> AddNewUser([FromBody] UserModel user)
+        {
+            var addedUser = await usersService.AddNewUser(user);
+            if (addedUser == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(addedUser);
+        }
+
+        [HttpPost("register")]
         public async Task<dynamic> RegisterNewUser([FromBody] UserModel user)
         {
             var addedUser = await usersService.RegisterNewUser(user);
+            if (addedUser == null)
+            {
+                return BadRequest();
+            }
             return Ok(addedUser);
         }
     }
