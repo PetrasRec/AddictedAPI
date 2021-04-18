@@ -76,7 +76,12 @@ namespace Addicted
 
             services.Configure<IdentityOptions>(x =>
             {
-
+                x.Password.RequireDigit = false;
+                x.Password.RequiredLength = 0;
+                x.Password.RequireLowercase = false;
+                x.Password.RequireNonAlphanumeric = false;
+                x.Password.RequiredUniqueChars = 0;
+                x.Password.RequireUppercase = false;
             });
 
             services.AddCors(o => o.AddPolicy("DevCorsPolicy", builder =>
@@ -90,7 +95,9 @@ namespace Addicted
                 options.HttpOnly = HttpOnlyPolicy.Always;
                 options.Secure = CookieSecurePolicy.Always;
             });
- 
+
+            var serviceProvider = services.BuildServiceProvider();
+            CreateRoles(serviceProvider).Wait();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -115,5 +122,46 @@ namespace Addicted
                 endpoints.MapControllers();
             });
         }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            string[] roleNames = { "Admin", "User" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    //create the roles and seed them to the database: Question 1
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            //Here you could create a super user who will maintain the web app
+            var poweruser = new User
+            {
+                Name = "root",
+                Surname = "root",
+                UserName = "root@addicted.com",
+                Email = "root@addicted.com",
+            };
+            //Ensure you have these values in your appsettings.json file
+            var _user = await UserManager.FindByEmailAsync("root@addicted.com");
+
+            if (_user == null)
+            {
+                var createPowerUser = await UserManager.CreateAsync(poweruser, "root");
+                if (createPowerUser.Succeeded)
+                {
+                    //here we tie the new user to the role
+                    await UserManager.AddToRoleAsync(poweruser, "Admin");
+
+                }
+            }
+        }
     }
+ 
 }

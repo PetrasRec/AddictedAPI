@@ -11,7 +11,6 @@ using Addicted.Config;
 
 namespace Addicted.Controllers
 {
-   [Authorize(Roles="Admin")]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
