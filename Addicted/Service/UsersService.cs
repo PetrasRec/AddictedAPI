@@ -10,8 +10,10 @@ namespace Addicted.Service
 {
     public interface IUsersService
     {
-        Task<IdentityResult> RegisterNewUser(UserModel user);
+        Task<User> RegisterNewUser(UserModel user);
+        Task<User> AddNewUser(UserModel user);
         Task<bool> LogInUser(string email, string password);
+        User UpdateUserByID(string id, UserModel newData);
         User GetUserByEmail(string id);
         IEnumerable<User> GetAllUsers();
     }
@@ -34,7 +36,20 @@ namespace Addicted.Service
             return result.Succeeded;
         }
 
-        public async Task<IdentityResult> RegisterNewUser(UserModel user)
+        public User UpdateUserByID(string id, UserModel newData)
+        {
+            var user = authenticationContext.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+            {
+                return null;
+            }
+            user.Name = newData.Name;
+            user.Surname = newData.Surname;
+            authenticationContext.SaveChanges();
+            return user;
+        }
+
+        public async Task<User> RegisterNewUser(UserModel user)
         {
             var addedUser = new User()
             {
@@ -48,12 +63,39 @@ namespace Addicted.Service
                 var result = await _userManager.CreateAsync(addedUser, user.Password);
                 if (!result.Succeeded)
                 {
-                    return result;
+                    return null;
                 }
                 var newUser = authenticationContext.Users.Single(u => addedUser.Email.ToUpper() == u.NormalizedEmail);
 
                 await _userManager.AddToRoleAsync(newUser, Roles.User);
-                return result;
+                return newUser;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<User> AddNewUser(UserModel user)
+        {
+            var addedUser = new User()
+            {
+                UserName = user.Email,
+                Name = user.Name,
+                Surname = user.Surname,
+                Email = user.Email,
+            };
+            try
+            {
+                var result = await _userManager.CreateAsync(addedUser, user.Password);
+                if (!result.Succeeded)
+                {
+                    return null;
+                }
+                var newUser = authenticationContext.Users.Single(u => addedUser.Email.ToUpper() == u.NormalizedEmail);
+
+                await _userManager.AddToRoleAsync(newUser, Roles.User);
+                return newUser;
             }
             catch (Exception ex)
             {
