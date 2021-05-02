@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Addicted.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[controller]")]
     public class BetsController : Controller
@@ -58,28 +57,28 @@ namespace Addicted.Controllers
 
             await _context.Bets.AddAsync(bet);
             await _context.SaveChangesAsync();
-
-            return Ok();
+          
+            return Ok(bet);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Edit([FromBody] Bet modifiedBet)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Edit(int id, [FromBody] Bet modifiedBet)
         {
             if (!ModelState.IsValid) return BadRequest();
 
             
             var user = await _userManager.FindByIdAsync(User.Identity.Name);
-            var bet = await _context.Bets.FindAsync(modifiedBet.Id);
+            var bet = await _context.Bets.FindAsync(id);
 
             if (bet == null)
             {
                 return NotFound();
             }
 
-            if (user.Id != bet.User?.Id)
-            {
-                return Unauthorized();
-            }
+           // if (user.Id != bet?.User?.Id)
+           // {
+           //     return Unauthorized();
+           // }
 
             bet.Title = modifiedBet.Title;
             bet.Description = modifiedBet.Description;
@@ -88,7 +87,7 @@ namespace Addicted.Controllers
             bet.DateEnd = modifiedBet.DateEnd;
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(bet);
         }
 
         [HttpDelete("{id}")]
@@ -103,13 +102,24 @@ namespace Addicted.Controllers
 
             var user = await _userManager.FindByIdAsync(User.Identity.Name);
 
-            if (bet.User?.Id != user.Id)
+            //if (bet.User?.Id != user.Id)
             {
-                return Unauthorized();
+           //     return Unauthorized();
             }
 
             _context.Bets.Remove(bet);
             await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("{id}/options/{option_id}")]
+        public async Task<IActionResult> DeleteBetOption(int id, int optionId)
+        {
+            var bet = await _context.Bets.FindAsync(id);
+            
+           // _context.Bets.Remove(bet.BetOptions.Single(o => o.Id == optionId));
+           //  var betOption = await _context.BetOptions.FindAsync(optionId);
+           //  _context.BetOptions.Remove(betOption);
             return Ok();
         }
     }

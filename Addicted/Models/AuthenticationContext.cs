@@ -27,7 +27,6 @@ namespace Addicted.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Bet> Bets { get; set; }
 
-   
         public User GetUserByEmail(string email)
         {
             return Users.Single(u => u.NormalizedEmail == email.ToUpper());
