@@ -27,7 +27,10 @@ namespace Addicted.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Bet> Bets { get; set; }
 
-   
+        public List<User> GetAllUsers()
+        {
+            return Users.Include(u => u.Coins).ToList();
+        }
         public User GetUserByEmail(string email)
         {
             return Users.Single(u => u.NormalizedEmail == email.ToUpper());

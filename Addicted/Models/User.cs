@@ -14,5 +14,6 @@ namespace Addicted.Models
 
         [Column(TypeName = "nvarchar(150)")]
         public string Surname { get; set; }
+        public Coin Coins { get; set; }
     }
 }

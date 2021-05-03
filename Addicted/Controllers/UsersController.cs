@@ -28,6 +28,12 @@ namespace Addicted.Controllers
             var users = usersService.GetAllUsers();
             return Ok(users);
         }
+        [HttpGet("profile")]
+        public ActionResult<dynamic> GetUser()
+        {
+            var user = usersService.GetUserByEmail("root@addicted.com");
+            return Ok(user);
+        }
 
         [HttpPut("{id}")]
         public ActionResult<dynamic> UpdateUserByID(string ?id, [FromBody] UserModel newData)
