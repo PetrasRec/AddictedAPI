@@ -147,6 +147,7 @@ namespace Addicted
                 Surname = "root",
                 UserName = "root@addicted.com",
                 Email = "root@addicted.com",
+                Coins = new Coin { VaciusCoin=100 }
             };
             //Ensure you have these values in your appsettings.json file
             var _user = await UserManager.FindByEmailAsync("root@addicted.com");

@@ -15,6 +15,7 @@ namespace Addicted.Service
         Task<bool> LogInUser(string email, string password);
         User UpdateUserByID(string id, UserModel newData);
         User GetUserByEmail(string id);
+        User GetUserById(string id);
         IEnumerable<User> GetAllUsers();
     }
 
@@ -57,6 +58,7 @@ namespace Addicted.Service
                 Name = user.Name,
                 Surname = user.Surname,
                 Email = user.Email,
+                Coins = new Coin { VaciusCoin=100 }
             };
             try
             {
@@ -84,6 +86,7 @@ namespace Addicted.Service
                 Name = user.Name,
                 Surname = user.Surname,
                 Email = user.Email,
+                Coins = new Coin { VaciusCoin = 100 }
             };
             try
             {
@@ -102,12 +105,14 @@ namespace Addicted.Service
                 throw ex;
             }
         }
-
+        public User GetUserById(string id)
+        {
+            return authenticationContext.Users.SingleOrDefault((user) => user.Id == id);
+        }
         public User GetUserByEmail(string email)
         {
-            return authenticationContext.GetUserByEmail(email);
+            return authenticationContext.GetAllUsers().SingleOrDefault(e => e.Email == email);
         }
-
         public IEnumerable<User> GetAllUsers()
         {
             return authenticationContext.Users;
