@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Addicted.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin,User")]
     [Route("[controller]")]
     public class BetsController : Controller
     {

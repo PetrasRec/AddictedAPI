@@ -26,7 +26,20 @@ namespace Addicted.Controllers
         [Authorize()]
         public ActionResult<dynamic> GetAllUsers()
         {
-            var users = usersService.GetAllUsers();
+            var users = usersService.GetAllUsers().Select(async u =>
+            {
+                string roleName = await usersService.GetUserRoleId(u);
+                var newU = new UserModel
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    Email = u.Email,
+                    RoleId = roleName,
+                };
+                return newU;
+            }).Select(u=>u.Result);
             return Ok(users);
         }
         [HttpGet("profile")]
@@ -39,14 +52,14 @@ namespace Addicted.Controllers
 
         [HttpPut("{id}")]
         [Authorize()]
-        public ActionResult<dynamic> UpdateUserByID(string ?id, [FromBody] UserModel newData)
+        public async Task<dynamic> UpdateUserByID(string ?id, [FromBody] UserModel newData)
         {
             if (id == null)
             {
                 return BadRequest();
             }
 
-            var updatedUser = usersService.UpdateUserByID(id, newData);
+            var updatedUser = await usersService.UpdateUserByID(id, newData);
             if (updatedUser == null)
             {
                 return NotFound();

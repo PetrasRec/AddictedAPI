@@ -11,12 +11,13 @@ namespace Addicted.Service
     public interface IUsersService
     {
         Task<User> RegisterNewUser(UserModel user);
-        Task<User> AddNewUser(UserModel user);
+        Task<UserModel> AddNewUser(UserModel user);
         Task<bool> LogInUser(string email, string password);
-        User UpdateUserByID(string id, UserModel newData);
+        Task<UserModel> UpdateUserByID(string id, UserModel newData);
         User GetUserByEmail(string id);
         User GetUserById(string id);
         IEnumerable<User> GetAllUsers();
+        Task<string> GetUserRoleId(User user);
     }
 
     public class UsersService : IUsersService
@@ -24,11 +25,13 @@ namespace Addicted.Service
         private UserManager<User> _userManager;
         private SignInManager<User> _signInManager;
         private AuthenticationContext authenticationContext;
-        public UsersService(UserManager<User> userManager, SignInManager<User> signInmanager, AuthenticationContext authenticationContext)
+        public RoleManager<IdentityRole> _rolesManager;
+        public UsersService(UserManager<User> userManager, SignInManager<User> signInmanager, AuthenticationContext authenticationContext, RoleManager<IdentityRole> rolesManager)
         {
             this._signInManager = signInmanager;
             this._userManager = userManager;
             this.authenticationContext = authenticationContext;
+            this._rolesManager = rolesManager;
         }
 
         public async Task<bool> LogInUser(string email, string password)
@@ -36,8 +39,13 @@ namespace Addicted.Service
             var result = await _signInManager.PasswordSignInAsync(email, password, true, false);
             return result.Succeeded;
         }
-
-        public User UpdateUserByID(string id, UserModel newData)
+        public async Task<string> GetUserRoleId(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            string role = roles.SingleOrDefault();
+            return _rolesManager.Roles.Single(r => r.Name == role).Id;
+        }
+        public async Task<UserModel> UpdateUserByID(string id, UserModel newData)
         {
             var user = authenticationContext.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
@@ -46,8 +54,25 @@ namespace Addicted.Service
             }
             user.Name = newData.Name;
             user.Surname = newData.Surname;
+            user.Email = newData.Email;
+            user.UserName = newData.UserName;
+            var roles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, roles);
+
+            var role = _rolesManager.Roles.Single(r => r.Id == newData.RoleId);
+
+            await _userManager.AddToRoleAsync(user, role.Name);
+
             authenticationContext.SaveChanges();
-            return user;
+            return new UserModel
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Surname = user.Surname,
+                Email = user.Email,
+                UserName = user.UserName,
+                RoleId = role.Id,
+            };
         }
 
         public async Task<User> RegisterNewUser(UserModel user)
@@ -68,8 +93,8 @@ namespace Addicted.Service
                     return null;
                 }
                 var newUser = authenticationContext.Users.Single(u => addedUser.Email.ToUpper() == u.NormalizedEmail);
-
                 await _userManager.AddToRoleAsync(newUser, Roles.User);
+
                 return newUser;
             }
             catch (Exception ex)
@@ -78,7 +103,7 @@ namespace Addicted.Service
             }
         }
 
-        public async Task<User> AddNewUser(UserModel user)
+        public async Task<UserModel> AddNewUser(UserModel user)
         {
             var addedUser = new User()
             {
@@ -97,8 +122,19 @@ namespace Addicted.Service
                 }
                 var newUser = authenticationContext.Users.Single(u => addedUser.Email.ToUpper() == u.NormalizedEmail);
 
-                await _userManager.AddToRoleAsync(newUser, Roles.User);
-                return newUser;
+                var roleToBeAdded = _rolesManager.Roles.SingleOrDefault(role => role.Id == user.RoleId);
+
+                await _userManager.AddToRoleAsync(newUser, roleToBeAdded.Name);
+
+                return new UserModel
+                {
+                    Id = newUser.Id,
+                    Name = newUser.Name,
+                    Surname = newUser.Surname,
+                    Email = newUser.Email,
+                    UserName = newUser.UserName,
+                    RoleId = roleToBeAdded.Id,
+                };
             }
             catch (Exception ex)
             {
