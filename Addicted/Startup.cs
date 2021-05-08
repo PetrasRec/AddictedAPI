@@ -86,15 +86,19 @@ namespace Addicted
 
             services.AddCors(o => o.AddPolicy("DevCorsPolicy", builder =>
             {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                builder
+                    .WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials(); // this is used for saving cookies
             }));
 
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-                options.HttpOnly = HttpOnlyPolicy.Always;
-                options.Secure = CookieSecurePolicy.Always;
-            });
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    options.MinimumSameSitePolicy = SameSiteMode.None;
+            //    options.HttpOnly = HttpOnlyPolicy.Always;
+            //    options.Secure = CookieSecurePolicy.Always;
+            //});
 
             var serviceProvider = services.BuildServiceProvider();
             CreateRoles(serviceProvider).Wait();
@@ -103,9 +107,9 @@ namespace Addicted
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("DevCorsPolicy");
             if (env.IsDevelopment())
             {
-                app.UseCors("DevCorsPolicy");
                 app.UseDeveloperExceptionPage();
             }
 
@@ -161,6 +165,9 @@ namespace Addicted
                     await UserManager.AddToRoleAsync(poweruser, "Admin");
 
                 }
+            } else
+            {
+                await UserManager.UpdateAsync(poweruser);
             }
         }
     }

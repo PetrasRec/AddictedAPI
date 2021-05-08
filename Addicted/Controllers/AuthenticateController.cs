@@ -28,10 +28,13 @@ namespace Addicted.Controllers
             {
                 return Unauthorized();
             }
+
             Response.Cookies.Append("access_token", token.Token, new CookieOptions()
             {
-                HttpOnly=true,
-            });
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+            }); 
+
             return Ok();
         }
     }

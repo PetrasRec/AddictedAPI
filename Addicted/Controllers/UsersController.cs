@@ -23,19 +23,22 @@ namespace Addicted.Controllers
         }
 
         [HttpGet]
+        [Authorize()]
         public ActionResult<dynamic> GetAllUsers()
         {
             var users = usersService.GetAllUsers();
             return Ok(users);
         }
         [HttpGet("profile")]
+        [Authorize()]
         public ActionResult<dynamic> GetUser()
         {
-            var user = usersService.GetUserByEmail("root@addicted.com");
+            var user = usersService.GetUserByEmail(User.Identity.Name);
             return Ok(user);
         }
 
         [HttpPut("{id}")]
+        [Authorize()]
         public ActionResult<dynamic> UpdateUserByID(string ?id, [FromBody] UserModel newData)
         {
             if (id == null)
@@ -53,6 +56,7 @@ namespace Addicted.Controllers
         }
 
         [HttpPost]
+        [Authorize()]
         public async Task<dynamic> AddNewUser([FromBody] UserModel user)
         {
             var addedUser = await usersService.AddNewUser(user);
