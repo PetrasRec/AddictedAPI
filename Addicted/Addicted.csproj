@@ -9,6 +9,12 @@
     <Compile Remove="Migrations\20210325180254_addBetModel.Designer.cs" />
     <Compile Remove="Migrations\20210325185459_addBetModel.cs" />
     <Compile Remove="Migrations\20210325185459_addBetModel.Designer.cs" />
+    <Compile Remove="Migrations\20210515150410_addOfferModel.cs" />
+    <Compile Remove="Migrations\20210515150410_addOfferModel.Designer.cs" />
+    <Compile Remove="Migrations\20210515150519_addOfferModel.cs" />
+    <Compile Remove="Migrations\20210515150519_addOfferModel.Designer.cs" />
+    <Compile Remove="Migrations\20210515150735_addOfferModel.cs" />
+    <Compile Remove="Migrations\20210515150735_addOfferModel.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +27,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.12">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

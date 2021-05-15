@@ -18,5 +18,6 @@ namespace Addicted.Models
         public ICollection<BetOption> BetOptions { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
+        public bool IsFinished { get; set; }
     }
 }

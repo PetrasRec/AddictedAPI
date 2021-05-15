@@ -27,7 +27,7 @@ namespace Addicted.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var bets = await _context.Bets.Include(b => b.BetOptions).ToListAsync();
+            var bets = await _context.Bets.Include(b => b.BetOptions).Include(b => b.User).ToListAsync();
             return Ok(bets);
         }
 
@@ -54,7 +54,7 @@ namespace Addicted.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            bet.User = await _userManager.FindByIdAsync(User.Identity.Name);
+            bet.User = await _userManager.FindByEmailAsync(User.Identity.Name);
 
             await _context.Bets.AddAsync(bet);
             await _context.SaveChangesAsync();
@@ -68,7 +68,7 @@ namespace Addicted.Controllers
             if (!ModelState.IsValid) return BadRequest();
 
             
-            var user = await _userManager.FindByIdAsync(User.Identity.Name);
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var bet = await _context.Bets.FindAsync(id);
 
             if (bet == null)
@@ -101,12 +101,12 @@ namespace Addicted.Controllers
                 return NotFound();
             }
 
-            var user = await _userManager.FindByIdAsync(User.Identity.Name);
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
 
             //if (bet.User?.Id != user.Id)
-            {
-           //     return Unauthorized();
-            }
+            //{
+            //    return Unauthorized();
+            //}
 
             _context.Bets.Remove(bet);
             await _context.SaveChangesAsync();
