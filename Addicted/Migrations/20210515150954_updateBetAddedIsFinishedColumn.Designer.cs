@@ -4,18 +4,20 @@ using Addicted.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Addicted.Migrations
 {
     [DbContext(typeof(AuthenticationContext))]
-    partial class AuthenticationContextModelSnapshot : ModelSnapshot
+    [Migration("20210515150954_updateBetAddedIsFinishedColumn")]
+    partial class updateBetAddedIsFinishedColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.15")
+                .HasAnnotation("ProductVersion", "3.1.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -100,17 +102,12 @@ namespace Addicted.Migrations
                     b.Property<int?>("BetId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BetOptionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BetId");
-
-                    b.HasIndex("BetOptionId");
 
                     b.HasIndex("UserId");
 
@@ -357,10 +354,6 @@ namespace Addicted.Migrations
                     b.HasOne("Addicted.Models.Bet", "Bet")
                         .WithMany()
                         .HasForeignKey("BetId");
-
-                    b.HasOne("Addicted.Models.BetOption", "BetOption")
-                        .WithMany()
-                        .HasForeignKey("BetOptionId");
 
                     b.HasOne("Addicted.Models.User", "User")
                         .WithMany()
