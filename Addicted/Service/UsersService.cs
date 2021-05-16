@@ -18,6 +18,7 @@ namespace Addicted.Service
         User GetUserById(string id);
         IEnumerable<User> GetAllUsers();
         Task<string> GetUserRoleId(User user);
+        Task<string> GetUserRoleName(string email);
     }
 
     public class UsersService : IUsersService
@@ -44,6 +45,13 @@ namespace Addicted.Service
             var roles = await _userManager.GetRolesAsync(user);
             string role = roles.SingleOrDefault();
             return _rolesManager.Roles.Single(r => r.Name == role).Id;
+        }
+        public async Task<string> GetUserRoleName(string email)
+        {
+            var user = GetUserByEmail(email);
+            var roles = await _userManager.GetRolesAsync(user);
+            string role = roles.SingleOrDefault();
+            return _rolesManager.Roles.Single(r => r.Name == role).Name;
         }
         public async Task<UserModel> UpdateUserByID(string id, UserModel newData)
         {

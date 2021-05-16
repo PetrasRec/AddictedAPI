@@ -103,10 +103,10 @@ namespace Addicted.Controllers
 
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
 
-            //if (bet.User?.Id != user.Id)
-            //{
-            //    return Unauthorized();
-            //}
+            if (bet.User?.Id != user.Id)
+            {
+                return Unauthorized();
+            }
 
             _context.Bets.Remove(bet);
             await _context.SaveChangesAsync();
@@ -129,16 +129,30 @@ namespace Addicted.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var bet = await _context.Bets.FindAsync(bet_id);
-           // if(bet.IsFinished)
-           // {
-           //     return Conflict();
-           // }
-           // bet.IsFinished = true;
+            var bet = _context.Bets.Include(bet => bet.BetOptions).SingleOrDefault(bet => bet.Id == bet_id);
+            if (bet.IsFinished)
+            {
+                return Conflict();
+            }
+            bet.IsFinished = true;
+            var winnerBet = bet.BetOptions.SingleOrDefault(option => option.Id == option_id);
+            winnerBet.IsWinner = true;
+
             var offers = _context.Offer;
-            var winners = await _context.Offer.Include(o => o.User).Include(o => o.Bet).Where(o => o.Bet.Id == bet_id && o.BetOptionId == option_id).ToListAsync();
-            var totalAmount = _context.Offer.Where(o => o.Bet.Id == bet_id).Sum(o => o.Amount);
-            var winnerAmount = _context.Offer.Where(o => o.Bet.Id == bet_id && o.BetOptionId == option_id).Sum(o => o.Amount);
+            var winners = _context.Offer
+                            .Include(o => o.User)
+                            .Include(o => o.Bet)
+                            .Where(o => o.Bet.Id == bet_id && o.BetOptionId == option_id)
+                            .ToList();
+
+            var totalAmount = _context.Offer
+                                .Where(o => o.Bet.Id == bet_id)
+                                .Sum(o => o.Amount);
+
+            var winnerAmount = _context.Offer
+                                .Where(o => o.Bet.Id == bet_id && o.BetOptionId == option_id)
+                                .Sum(o => o.Amount);
+
             foreach (var winner in winners)
             {
                 int winnings = (int)((double) winner.Amount / (double) winnerAmount * (double) totalAmount);

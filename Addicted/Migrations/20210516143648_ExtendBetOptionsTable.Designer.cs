@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Addicted.Migrations
 {
     [DbContext(typeof(AuthenticationContext))]
-    [Migration("20210515200652_Initial_from_scuffed")]
-    partial class Initial_from_scuffed
+    [Migration("20210516143648_ExtendBetOptionsTable")]
+    partial class ExtendBetOptionsTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -63,6 +63,9 @@ namespace Addicted.Migrations
 
                     b.Property<int?>("BetId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsWinner")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");

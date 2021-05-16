@@ -32,6 +32,16 @@ namespace Addicted.Controllers
             return Ok(offers);
         }
 
+        [HttpGet("{betId}")]
+        public async Task<IActionResult> GetAllBetOffers(int betId)
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var offers = _context.Offer
+                .Include(o => o.Bet);
+
+            return Ok(offers.Where(o => o.Bet.Id == betId).ToList());
+        }
+
         [HttpPost("{bet_id}")]
         public async Task<IActionResult> Create(int bet_id, [FromBody] Offer offer)
         {

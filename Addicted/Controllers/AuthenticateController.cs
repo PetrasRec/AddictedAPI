@@ -1,5 +1,6 @@
 ﻿using Addicted.Authentication;
 using Addicted.Models;
+using Addicted.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,10 +15,11 @@ namespace Addicted.Controllers
     public class AuthenticateController : ControllerBase
     {
         private readonly IJwtAuthenticationManager jwtAuthenticationManager;
-
-        public AuthenticateController(IJwtAuthenticationManager jwtAuthenticationManager)
+        private IUsersService usersService;
+        public AuthenticateController(IJwtAuthenticationManager jwtAuthenticationManager, IUsersService usersService)
         {
             this.jwtAuthenticationManager = jwtAuthenticationManager;
+            this.usersService = usersService;
         }
 
         [HttpPost("login")]
@@ -29,13 +31,15 @@ namespace Addicted.Controllers
                 return Unauthorized();
             }
 
+            var role = await usersService.GetUserRoleName(userCred.Email);
+
             Response.Cookies.Append("access_token", token.Token, new CookieOptions()
             {
                 HttpOnly = true,
                 SameSite = SameSiteMode.Strict,
             }); 
 
-            return Ok();
+            return Ok(new Dictionary<String, String>() { ["roleName"] = role });
         }
     }
 }
