@@ -44,15 +44,19 @@ namespace Addicted.Controllers
         }
 
         [HttpPost("{bet_id}")]
-        public async Task<IActionResult> Create(int bet_id, [FromBody] Offer offer)
+        public async Task<IActionResult> Create(int bet_id, [FromBody] OfferModel offerData)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            
-            offer.Id = 0;
 
+            var offer = new Offer();
+            offer.Id = 0;
+            offer.Bet = _context.Bets.SingleOrDefault((b) => b.Id == bet_id);
             var _usr = await _userManager.FindByEmailAsync(User.Identity.Name);
             var user = _context.Users.Include(u => u.Coins).First(u => u.Id == _usr.Id);
+            offer.User = user;
+            offer.BetOptionId = offerData.BetOptionId;
+            offer.Amount = offerData.Amount;
 
             if (offer.Amount <= 0)
             {
@@ -63,9 +67,6 @@ namespace Addicted.Controllers
             {
                 return BadRequest("Ure broke fam");
             }
-
-            offer.User = user;
-            offer.Bet = await _context.Bets.FindAsync(bet_id);
 
             user.Coins.VaciusCoin -= offer.Amount;
 
