@@ -6,19 +6,18 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 
 namespace Addicted.IntegrationTests
 {
     public class TestClientProvider
     {
         public HttpClient Client { get; private set; }
-        public TestServer CreateTestServer()
-        {
-            var server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
-            Client = server.CreateClient();
-            return server;
-        }
+        //public TestServer CreateTestServer()
+        //{
+        //    var server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+        //    Client = server.CreateClient();
+        //    return server;
+        //}
 
         public class Response
         {
