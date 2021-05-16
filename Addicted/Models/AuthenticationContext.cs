@@ -27,6 +27,7 @@ namespace Addicted.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Bet> Bets { get; set; }
         public DbSet<Offer> Offer { get; set; }
+        public DbSet<BetOption> BetOption { get; set; }
 
         public List<User> GetAllUsers()
         {

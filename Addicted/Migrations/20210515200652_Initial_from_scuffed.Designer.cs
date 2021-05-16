@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Addicted.Migrations
 {
     [DbContext(typeof(AuthenticationContext))]
-    [Migration("20210515150911_addOfferModel")]
-    partial class addOfferModel
+    [Migration("20210515200652_Initial_from_scuffed")]
+    partial class Initial_from_scuffed
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.13")
+                .HasAnnotation("ProductVersion", "3.1.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -36,6 +36,9 @@ namespace Addicted.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFinished")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -97,6 +100,9 @@ namespace Addicted.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("BetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BetOptionId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")

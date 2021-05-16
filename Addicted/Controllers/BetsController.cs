@@ -123,6 +123,35 @@ namespace Addicted.Controllers
            //  _context.BetOptions.Remove(betOption);
             return Ok();
         }
+
+        [HttpPost("{bet_id}/finish/{option_id}")]
+        public async Task<IActionResult> FinishBet(int bet_id, int option_id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var bet = await _context.Bets.FindAsync(bet_id);
+           // if(bet.IsFinished)
+           // {
+           //     return Conflict();
+           // }
+           // bet.IsFinished = true;
+            var offers = _context.Offer;
+            var winners = await _context.Offer.Include(o => o.User).Include(o => o.Bet).Where(o => o.Bet.Id == bet_id && o.BetOptionId == option_id).ToListAsync();
+            var totalAmount = _context.Offer.Where(o => o.Bet.Id == bet_id).Sum(o => o.Amount);
+            var winnerAmount = _context.Offer.Where(o => o.Bet.Id == bet_id && o.BetOptionId == option_id).Sum(o => o.Amount);
+            foreach (var winner in winners)
+            {
+                int winnings = (int)((double) winner.Amount / (double) winnerAmount * (double) totalAmount);
+
+                var _usr = await _userManager.FindByEmailAsync(winner.User.Email);
+                var user = _context.Users.Include(u => u.Coins).First(u => u.Id == _usr.Id);
+
+                user.Coins.VaciusCoin += winnings;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
 

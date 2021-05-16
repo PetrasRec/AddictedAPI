@@ -37,6 +37,8 @@ namespace Addicted.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+            
+            offer.Id = 0;
 
             var _usr = await _userManager.FindByEmailAsync(User.Identity.Name);
             var user = _context.Users.Include(u => u.Coins).First(u => u.Id == _usr.Id);
@@ -63,4 +65,3 @@ namespace Addicted.Controllers
         }
     }
 }
-
