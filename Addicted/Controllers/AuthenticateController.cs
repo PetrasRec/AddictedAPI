@@ -28,7 +28,7 @@ namespace Addicted.Controllers
             var token = await jwtAuthenticationManager.Authenticate(userCred.Email, userCred.Password);
             if (token == null)
             {
-                return Unauthorized();
+                return Unauthorized("Wrong login details. Email or password is incorrect");
             }
 
             var role = await usersService.GetUserRoleName(userCred.Email);

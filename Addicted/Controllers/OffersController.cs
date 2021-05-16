@@ -28,7 +28,7 @@ namespace Addicted.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            var offers = await _context.Offer.Include(o => o.Bet).Where(o => o.User.Id == user.Id).ToListAsync();
+            var offers = await _context.Offer.Include(o => o.Bet).Where(o => o.User.Id == user.Id && !o.Bet.IsFinished).ToListAsync();
             return Ok(offers);
         }
 
