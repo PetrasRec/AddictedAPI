@@ -138,11 +138,14 @@ namespace Addicted.Controllers
             var winnerBet = bet.BetOptions.SingleOrDefault(option => option.Id == option_id);
             winnerBet.IsWinner = true;
 
-            var offers = _context.Offer;
+            var offers = _context.Offer
+                            .Include(o => o.User)
+                            .Include(o => o.Bet)
+                            .ToList();
             var winners = _context.Offer
                             .Include(o => o.User)
                             .Include(o => o.Bet)
-                            .Where(o => o.Bet.Id == bet_id && o.BetOptionId == option_id)
+                            .Where(o => o.BetOptionId == option_id)
                             .ToList();
 
             var totalAmount = _context.Offer
