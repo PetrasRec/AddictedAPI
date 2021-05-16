@@ -37,7 +37,8 @@ namespace Addicted.Controllers
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var offers = _context.Offer
-                .Include(o => o.Bet);
+                .Include(o => o.Bet)
+                .Include(o => o.User);
 
             return Ok(offers.Where(o => o.Bet.Id == betId).ToList());
         }
