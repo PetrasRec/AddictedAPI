@@ -100,7 +100,7 @@ namespace Addicted.Migrations
                     b.Property<int?>("BetId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BetOptionId")
+                    b.Property<int>("BetOptionId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -109,8 +109,6 @@ namespace Addicted.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BetId");
-
-                    b.HasIndex("BetOptionId");
 
                     b.HasIndex("UserId");
 
@@ -357,10 +355,6 @@ namespace Addicted.Migrations
                     b.HasOne("Addicted.Models.Bet", "Bet")
                         .WithMany()
                         .HasForeignKey("BetId");
-
-                    b.HasOne("Addicted.Models.BetOption", "BetOption")
-                        .WithMany()
-                        .HasForeignKey("BetOptionId");
 
                     b.HasOne("Addicted.Models.User", "User")
                         .WithMany()

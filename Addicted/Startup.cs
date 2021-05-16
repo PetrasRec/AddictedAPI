@@ -101,7 +101,7 @@ namespace Addicted
             //});
 
             var serviceProvider = services.BuildServiceProvider();
-            //CreateRoles(serviceProvider).Wait();
+            CreateRoles(serviceProvider).Wait();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
