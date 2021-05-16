@@ -31,6 +31,18 @@ namespace Addicted.Controllers
             return Ok(bets);
         }
 
+        [HttpGet("active")]
+        public async Task<IActionResult> GetAllActiveBets()
+        {
+            var bets = await _context.Bets
+                .Include(b => b.BetOptions)
+                .Include(b => b.User)
+                .Where(b => !b.IsFinished && b.BetOptions.Count > 0)
+                .ToListAsync();
+
+            return Ok(bets);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(int? id)
         {
