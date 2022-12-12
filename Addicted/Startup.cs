@@ -67,6 +67,7 @@ namespace Addicted
 
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IJwtAuthenticationManager, JwtAuthenticationManager>();
+            services.AddScoped<IBetsService, BetsService>();
 
             services.AddDbContext<AuthenticationContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));

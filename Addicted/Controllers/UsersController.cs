@@ -24,27 +24,14 @@ namespace Addicted.Controllers
 
         [HttpGet]
         [Authorize()]
-        public ActionResult<dynamic> GetAllUsers()
+        public IActionResult GetAllUsers()
         {
-            var users = usersService.GetAllUsers().Select(async u =>
-            {
-                string roleName = await usersService.GetUserRoleId(u);
-                var newU = new UserModel
-                {
-                    Id = u.Id,
-                    UserName = u.UserName,
-                    Name = u.Name,
-                    Surname = u.Surname,
-                    Email = u.Email,
-                    RoleId = roleName,
-                };
-                return newU;
-            }).Select(u=>u.Result);
-            return Ok(users);
+            return Ok(usersService.GetAllUsers());
         }
+
         [HttpGet("profile")]
         [Authorize()]
-        public ActionResult<dynamic> GetUser()
+        public IActionResult GetUser()
         {
             var user = usersService.GetUserByEmail(User.Identity.Name);
             return Ok(user);
@@ -52,7 +39,7 @@ namespace Addicted.Controllers
 
         [HttpPut("{id}")]
         [Authorize()]
-        public async Task<dynamic> UpdateUserByID(string ?id, [FromBody] UserModel newData)
+        public async Task<IActionResult> UpdateUserByID(string ?id, [FromBody] UserModel newData)
         {
             if (id == null)
             {
@@ -70,7 +57,7 @@ namespace Addicted.Controllers
 
         [HttpPost]
         [Authorize()]
-        public async Task<dynamic> AddNewUser([FromBody] UserModel user)
+        public async Task<IActionResult> AddNewUser([FromBody] UserModel user)
         {
             var addedUser = await usersService.AddNewUser(user);
             if (addedUser == null)
@@ -82,7 +69,7 @@ namespace Addicted.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<dynamic> RegisterNewUser([FromBody] UserModel user)
+        public async Task<IActionResult> RegisterNewUser([FromBody] UserModel user)
         {
             var addedUser = await usersService.RegisterNewUser(user);
             if (addedUser == null)

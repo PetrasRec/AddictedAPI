@@ -159,7 +159,24 @@ namespace Addicted.Service
         }
         public IEnumerable<User> GetAllUsers()
         {
-            return authenticationContext.Users;
+            var t = (IEnumerable<User>)authenticationContext.Users;
+                
+            var u = t.Select(async u =>
+            {
+                string roleName = await GetUserRoleId(u);
+                var newU = new UserModel
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    Email = u.Email,
+                    RoleId = roleName,
+                };
+                return newU;
+            }).Select(u => u.Result);
+
+            return (IEnumerable<User>)u;
         }
     }
 }
